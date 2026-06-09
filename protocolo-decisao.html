@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Protocolo VIDA de Decisão Patrimonial Importante™</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --v:#1A3C2E;--vm:#2E5C46;--vc:#1e4535;
+  --o:linear-gradient(135deg,#f8e38c,#d7ae4d,#f8e38c);
+  --om:#d7ae4d;--ol:#f8e38c;
+  --b:#FFFFFF;--cinza:#e8e0d0;--cinza-e:#9a8f7e;
+  --ok:#55cc88;--alerta:#ffcc66;--risco:#ff8888;
+}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Montserrat',sans-serif;
+  background:var(--v);
+  color:var(--b);
+  font-size:18px;
+  line-height:1.7;
+  min-height:100vh;
+}
+
+/* ── HEADER ── */
+.header{
+  background:rgba(15,32,23,0.95);
+  border-bottom:1px solid rgba(215,174,77,0.3);
+  padding:16px 24px;
+  display:flex;align-items:center;justify-content:space-between;
+  position:sticky;top:0;z-index:100;
+  backdrop-filter:blur(8px);
+}
+.header-marca{
+  font-size:12px;font-weight:700;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--om);
+}
+.header-sub{font-size:11px;color:rgba(255,255,255,0.45);margin-top:2px}
+.header-etapa{
+  font-size:11px;font-weight:700;letter-spacing:.12em;
+  text-transform:uppercase;color:rgba(255,255,255,0.35);
+  transition:color .3s;
+}
+
+/* ── PROGRESS BAR ── */
+.progress-bar{
+  height:3px;background:rgba(255,255,255,0.08);
+  position:sticky;top:57px;z-index:99;
+}
+.progress-fill{
+  height:100%;
+  background:var(--o);
+  transition:width .5s ease;
+  width:0%;
+}
+
+/* ── CONTAINER ── */
+.container{max-width:760px;margin:0 auto;padding:0 24px}
+
+/* ── TELA ── */
+.tela{display:none;padding:60px 0 80px;animation:fadeIn .4s ease}
+.tela.ativa{display:block}
+@keyframes fadeIn{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+
+/* ── INTRO ── */
+.intro-badge{
+  display:inline-block;
+  font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--om);border:1px solid rgba(215,174,77,0.3);
+  padding:8px 20px;border-radius:1px;margin-bottom:32px;
+}
+.intro-titulo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2.2rem,5vw,3.2rem);
+  font-weight:300;line-height:1.15;
+  margin-bottom:20px;
+}
+.intro-titulo em{
+  font-style:italic;
+  background:var(--o);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+}
+.intro-sub{
+  font-size:19px;color:rgba(255,255,255,0.80);
+  line-height:1.7;margin-bottom:40px;max-width:600px;
+}
+.intro-decisao{
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(215,174,77,0.15);
+  border-left:3px solid var(--om);
+  border-radius:2px;
+  padding:24px 28px;
+  margin-bottom:40px;
+}
+.intro-decisao-label{
+  font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--om);margin-bottom:12px;
+}
+.intro-decisao-input{
+  width:100%;background:rgba(255,255,255,0.06);
+  border:1px solid rgba(215,174,77,0.2);border-radius:2px;
+  padding:14px 18px;font-family:'Montserrat',sans-serif;
+  font-size:16px;color:var(--b);resize:vertical;min-height:80px;
+  transition:border-color .2s;
+}
+.intro-decisao-input:focus{outline:none;border-color:rgba(215,174,77,0.6)}
+.intro-decisao-input::placeholder{color:rgba(255,255,255,0.30)}
+.intro-nome-wrap{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:20px}
+.intro-nome-input{
+  width:100%;background:rgba(255,255,255,0.06);
+  border:1px solid rgba(215,174,77,0.2);border-radius:2px;
+  padding:14px 18px;font-family:'Montserrat',sans-serif;
+  font-size:16px;color:var(--b);
+}
+.intro-nome-input:focus{outline:none;border-color:rgba(215,174,77,0.6)}
+.intro-nome-input::placeholder{color:rgba(255,255,255,0.30)}
+
+.etapas-preview{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:12px;
+  margin-bottom:48px;
+}
+.etapa-prev{
+  text-align:center;
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(215,174,77,0.1);
+  border-radius:2px;padding:20px 12px;
+}
+.etapa-prev-n{
+  font-family:'Cormorant Garamond',serif;
+  font-size:2.4rem;font-weight:300;
+  background:var(--o);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  line-height:1;margin-bottom:10px;
+}
+.etapa-prev-nome{font-size:12px;font-weight:700;color:var(--b);margin-bottom:6px}
+.etapa-prev-desc{font-size:11px;color:rgba(255,255,255,0.50);line-height:1.4}
+
+/* ── BTN ── */
+.btn{
+  display:inline-block;
+  background:var(--o);color:var(--v);
+  font-size:14px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;
+  padding:18px 40px;border-radius:2px;border:none;cursor:pointer;
+  transition:transform .2s,box-shadow .2s;
+  box-shadow:0 4px 24px rgba(215,174,77,0.2);
+}
+.btn:hover{transform:translateY(-2px);box-shadow:0 8px 32px rgba(215,174,77,0.3)}
+.btn-ghost{
+  display:inline-block;
+  background:transparent;
+  border:1px solid rgba(215,174,77,0.3);color:var(--om);
+  font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  padding:14px 28px;border-radius:2px;cursor:pointer;
+  transition:all .2s;margin-left:16px;
+}
+.btn-ghost:hover{border-color:var(--om);background:rgba(215,174,77,0.06)}
+
+/* ── ETAPA HEADER ── */
+.etapa-header{margin-bottom:40px}
+.etapa-num{
+  font-size:11px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--om);margin-bottom:12px;
+}
+.etapa-titulo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(1.8rem,4vw,2.6rem);
+  font-weight:300;line-height:1.2;margin-bottom:12px;
+}
+.etapa-pergunta{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(1.3rem,2.5vw,1.8rem);
+  font-style:italic;color:rgba(255,255,255,0.85);
+  line-height:1.4;margin-bottom:24px;
+  padding-left:20px;
+  border-left:2px solid var(--om);
+}
+.etapa-desc{
+  font-size:17px;color:rgba(255,255,255,0.70);
+  line-height:1.7;margin-bottom:32px;max-width:640px;
+}
+
+/* ── ESCALA ── */
+.escala-wrap{margin-bottom:36px}
+.escala-label{
+  font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--om);margin-bottom:20px;display:block;
+}
+.escala-opcoes{display:flex;flex-direction:column;gap:10px}
+.escala-btn{
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(215,174,77,0.12);
+  border-radius:2px;padding:18px 24px;
+  cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;gap:16px;
+  text-align:left;
+}
+.escala-btn:hover{background:rgba(255,255,255,0.08);border-color:rgba(215,174,77,0.3)}
+.escala-btn.sel{
+  background:rgba(215,174,77,0.12);
+  border-color:var(--om);
+}
+.escala-n{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.8rem;font-weight:300;
+  background:var(--o);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  min-width:32px;line-height:1;
+}
+.escala-txt{font-size:16px;color:rgba(255,255,255,0.85);line-height:1.4}
+
+/* ── FREEZE FRAME ── */
+.freeze-intro{
+  background:rgba(215,174,77,0.06);
+  border:1px solid rgba(215,174,77,0.2);
+  border-radius:3px;padding:32px;margin-bottom:32px;
+}
+.freeze-intro-titulo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.6rem;font-weight:300;margin-bottom:16px;
+}
+.freeze-passos{display:flex;flex-direction:column;gap:14px;margin-bottom:24px}
+.freeze-passo{
+  display:flex;align-items:flex-start;gap:16px;
+  font-size:16px;color:rgba(255,255,255,0.80);
+}
+.freeze-passo-n{
+  flex-shrink:0;
+  width:28px;height:28px;
+  background:var(--om);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:800;color:var(--v);
+  margin-top:2px;
+}
+
+.timer-wrap{text-align:center;padding:40px 20px}
+.timer-display{
+  font-family:'Cormorant Garamond',serif;
+  font-size:7rem;font-weight:300;
+  background:var(--o);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;
+  line-height:1;margin-bottom:16px;
+  letter-spacing:.05em;
+}
+.timer-label{
+  font-size:12px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  color:rgba(255,255,255,0.40);margin-bottom:32px;
+}
+.timer-instrucao{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.4rem;font-style:italic;
+  color:rgba(255,255,255,0.65);
+  line-height:1.6;margin-bottom:32px;max-width:480px;margin-left:auto;margin-right:auto;
+}
+
+/* SVG timer ring */
+.timer-ring-wrap{position:relative;width:200px;height:200px;margin:0 auto 24px}
+.timer-ring-wrap svg{transform:rotate(-90deg)}
+.timer-circle-bg{fill:none;stroke:rgba(255,255,255,0.08);stroke-width:6}
+.timer-circle-fill{fill:none;stroke:url(#timerGrad);stroke-width:6;stroke-linecap:round;transition:stroke-dashoffset 1s linear}
+
+/* ── VEREDICTO ── */
+.veredicto-wrap{margin-bottom:40px}
+.veredicto-opcao{
+  background:rgba(255,255,255,0.03);
+  border:1px solid rgba(255,255,255,0.08);
+  border-radius:2px;padding:24px 28px;
+  cursor:pointer;transition:all .2s;
+  margin-bottom:10px;display:flex;align-items:center;gap:20px;
+}
+.veredicto-opcao:hover{background:rgba(255,255,255,0.07)}
+.veredicto-opcao.sel-pros{border-color:var(--ok);background:rgba(85,204,136,0.1)}
+.veredicto-opcao.sel-rea{border-color:var(--alerta);background:rgba(255,204,102,0.1)}
+.veredicto-opcao.sel-adi{border-color:var(--risco);background:rgba(255,136,136,0.1)}
+.ver-ico{font-size:2rem;min-width:40px;text-align:center}
+.ver-nome{font-size:18px;font-weight:700;margin-bottom:4px}
+.ver-desc{font-size:15px;color:rgba(255,255,255,0.65);line-height:1.5}
+
+/* ── RESULTADO ── */
+.resultado-hero{
+  text-align:center;padding:48px 0 32px;
+  border-bottom:1px solid rgba(215,174,77,0.15);
+  margin-bottom:40px;
+}
+.resultado-nome-dec{
+  font-size:13px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--om);margin-bottom:8px;
+}
+.resultado-decisao-txt{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.5rem;font-style:italic;
+  color:rgba(255,255,255,0.75);margin-bottom:32px;
+}
+.resultado-veredicto{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(2.4rem,6vw,4rem);
+  font-weight:300;line-height:1.1;margin-bottom:16px;
+}
+.resultado-veredicto.pros{color:var(--ok)}
+.resultado-veredicto.rea{color:var(--alerta)}
+.resultado-veredicto.adi{color:var(--risco)}
+.resultado-veredicto-sub{
+  font-size:17px;color:rgba(255,255,255,0.65);
+  max-width:560px;margin:0 auto 32px;line-height:1.7;
+}
+
+.resultado-indices{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:2px;
+  margin-bottom:40px;
+}
+.indice-box{
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(215,174,77,0.1);
+  padding:28px 20px;text-align:center;
+}
+.indice-sigla{
+  font-size:10px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--om);margin-bottom:8px;
+}
+.indice-valor{
+  font-family:'Cormorant Garamond',serif;
+  font-size:3rem;font-weight:300;line-height:1;
+  margin-bottom:6px;
+}
+.indice-label{font-size:13px;color:rgba(255,255,255,0.55);line-height:1.4}
+
+.resultado-justificativa{
+  background:rgba(255,255,255,0.04);
+  border:1px solid rgba(215,174,77,0.15);
+  border-left:3px solid var(--om);
+  border-radius:2px;padding:28px;margin-bottom:32px;
+}
+.resultado-just-titulo{
+  font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--om);margin-bottom:12px;
+}
+.resultado-just-txt{
+  font-size:17px;color:rgba(255,255,255,0.85);line-height:1.7;
+}
+
+.resultado-fatores{
+  margin-bottom:40px;
+}
+.resultado-fat-titulo{
+  font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
+  color:var(--om);margin-bottom:20px;
+}
+.fat-item{
+  display:flex;align-items:flex-start;gap:16px;
+  padding:16px 0;border-bottom:1px solid rgba(255,255,255,0.06);
+}
+.fat-bar-wrap{flex:1}
+.fat-nome{font-size:15px;font-weight:600;color:var(--b);margin-bottom:6px}
+.fat-barra{height:4px;background:rgba(255,255,255,0.08);border-radius:2px;overflow:hidden;margin-bottom:4px}
+.fat-fill{height:100%;border-radius:2px;transition:width 1s ease}
+.fat-desc{font-size:13px;color:rgba(255,255,255,0.50);line-height:1.5}
+.fat-pct{font-size:14px;font-weight:700;min-width:40px;text-align:right;padding-top:2px}
+
+.resultado-cta{
+  text-align:center;padding:48px 24px;
+  background:rgba(255,255,255,0.02);
+  border:1px solid rgba(215,174,77,0.1);
+  border-radius:3px;margin-bottom:40px;
+}
+.resultado-cta-titulo{
+  font-family:'Cormorant Garamond',serif;
+  font-size:1.8rem;font-weight:300;margin-bottom:12px;
+}
+.resultado-cta-desc{
+  font-size:16px;color:rgba(255,255,255,0.65);
+  max-width:480px;margin:0 auto 28px;line-height:1.7;
+}
+
+/* ── RODAPÉ ── */
+footer{
+  background:rgba(0,0,0,0.3);border-top:1px solid rgba(215,174,77,0.1);
+  padding:28px 24px;text-align:center;
+  font-size:13px;color:rgba(255,255,255,0.30);line-height:2;
+}
+
+@media(max-width:600px){
+  .intro-nome-wrap{grid-template-columns:1fr}
+  .etapas-preview{grid-template-columns:1fr 1fr}
+  .resultado-indices{grid-template-columns:1fr}
+  .btn-ghost{margin-left:0;margin-top:12px;display:block;text-align:center}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-marca">Protocolo VIDA de Decisão Patrimonial Importante™</div>
+    <div class="header-sub">Ivan Vianna · CFP® · Método VIDA</div>
+  </div>
+  <div class="header-etapa" id="headerEtapa">Introdução</div>
+</div>
+<div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+
+<!-- ═══════════════════════════════
+     TELA 0 — INTRODUÇÃO
+════════════════════════════════════ -->
+<div class="tela ativa" id="tela-0">
+<div class="container">
+  <div class="intro-badge">Protocolo VIDA · Decisão Patrimonial</div>
+
+  <h1 class="intro-titulo">
+    Você está prestes a<br>tomar uma decisão<br><em>importante.</em>
+  </h1>
+
+  <p class="intro-sub">
+    Antes de decidir, este protocolo vai garantir que você está decidindo com clareza — não com emoção disfarçada de lógica.
+  </p>
+
+  <div class="intro-decisao">
+    <div class="intro-decisao-label">Qual é a decisão que você está avaliando?</div>
+    <div class="intro-nome-wrap">
+      <input class="intro-nome-input" type="text" id="inputNome"
+             placeholder="Seu nome" autocomplete="given-name"/>
+      <input class="intro-nome-input" type="text" id="inputValor"
+             placeholder="Valor estimado envolvido (ex: R$ 500k)" autocomplete="off"/>
+    </div>
+    <textarea class="intro-decisao-input" id="inputDecisao"
+              placeholder="Descreva a decisão em 1 ou 2 frases. Ex: Estou avaliando vender meu apartamento em São Paulo para investir em um imóvel na praia."
+              rows="3"></textarea>
+  </div>
+
+  <div class="etapas-preview">
+    <div class="etapa-prev">
+      <div class="etapa-prev-n">01</div>
+      <div class="etapa-prev-nome">Análise técnica</div>
+      <div class="etapa-prev-desc">Os números fazem sentido?</div>
+    </div>
+    <div class="etapa-prev">
+      <div class="etapa-prev-n">02</div>
+      <div class="etapa-prev-nome">Verificação emocional</div>
+      <div class="etapa-prev-desc">O que está influenciando além dos fatos?</div>
+    </div>
+    <div class="etapa-prev">
+      <div class="etapa-prev-n">03</div>
+      <div class="etapa-prev-nome">Freeze Frame</div>
+      <div class="etapa-prev-desc">5 minutos de regulação do estado interno</div>
+    </div>
+    <div class="etapa-prev">
+      <div class="etapa-prev-n">04</div>
+      <div class="etapa-prev-nome">Veredicto</div>
+      <div class="etapa-prev-desc">Prosseguir · Reavaliar · Adiar</div>
+    </div>
+  </div>
+
+  <button class="btn" onclick="iniciar()">Iniciar o protocolo →</button>
+</div>
+</div>
+
+<!-- ═══════════════════════════════
+     TELA 1 — ANÁLISE TÉCNICA
+════════════════════════════════════ -->
+<div class="tela" id="tela-1">
+<div class="container">
+  <div class="etapa-header">
+    <div class="etapa-num">Etapa 01 · Análise Técnica</div>
+    <h2 class="etapa-titulo">Os números fazem sentido?</h2>
+    <div class="etapa-pergunta">"Independentemente de como você está se sentindo agora, a lógica financeira desta decisão está clara?"</div>
+    <p class="etapa-desc">Responda cada dimensão com honestidade. Não existe resposta certa — existe clareza real.</p>
+  </div>
+
+  <div id="perguntas-tecnicas"></div>
+
+  <button class="btn" onclick="avancarParaEmocional()">Próxima etapa →</button>
+</div>
+</div>
+
+<!-- ═══════════════════════════════
+     TELA 2 — VERIFICAÇÃO EMOCIONAL
+════════════════════════════════════ -->
+<div class="tela" id="tela-2">
+<div class="container">
+  <div class="etapa-header">
+    <div class="etapa-num">Etapa 02 · Verificação Emocional</div>
+    <h2 class="etapa-titulo">O que está influenciando sua análise além dos fatos?</h2>
+    <div class="etapa-pergunta">"Toda decisão tem uma dimensão racional e uma dimensão emocional. Esta etapa mapeia o quanto cada fator emocional está presente na sua avaliação."</div>
+    <p class="etapa-desc">Seja honesto. O resultado só é útil se refletir o que você realmente está sentindo.</p>
+  </div>
+
+  <div id="perguntas-emocionais"></div>
+
+  <button class="btn" onclick="avancarParaFreeze()">Próxima etapa →</button>
+</div>
+</div>
+
+<!-- ═══════════════════════════════
+     TELA 3 — FREEZE FRAME
+════════════════════════════════════ -->
+<div class="tela" id="tela-3">
+<div class="container">
+  <div class="etapa-header">
+    <div class="etapa-num">Etapa 03 · Freeze Frame Patrimonial</div>
+    <h2 class="etapa-titulo">Pause antes de decidir.</h2>
+    <div class="etapa-pergunta">"5 minutos de regulação do estado interno — baseado na metodologia HeartMath de coerência cardíaca."</div>
+  </div>
+
+  <div class="freeze-intro" id="freezeIntro">
+    <h3 class="freeze-intro-titulo">O que você vai fazer nos próximos 5 minutos</h3>
+    <div class="freeze-passos">
+      <div class="freeze-passo">
+        <div class="freeze-passo-n">1</div>
+        <div>Respire lentamente pelo coração — imagine o ar entrando e saindo pela região do coração, não pelo nariz.</div>
+      </div>
+      <div class="freeze-passo">
+        <div class="freeze-passo-n">2</div>
+        <div>Ative uma emoção positiva genuína — lembre-se de algo ou alguém que você realmente aprecia.</div>
+      </div>
+      <div class="freeze-passo">
+        <div class="freeze-passo-n">3</div>
+        <div>Observe a decisão que está avaliando como se fosse de outra pessoa — sem julgamento, só observação.</div>
+      </div>
+      <div class="freeze-passo">
+        <div class="freeze-passo-n">4</div>
+        <div>Ao final, anote a primeira percepção que surgir sobre a decisão — sem analisar, só registrar.</div>
+      </div>
+    </div>
+    <button class="btn" onclick="iniciarFreeze()">Iniciar os 5 minutos →</button>
+  </div>
+
+  <div class="timer-wrap" id="timerWrap" style="display:none">
+    <div class="timer-ring-wrap">
+      <svg width="200" height="200" viewBox="0 0 200 200">
+        <defs>
+          <linearGradient id="timerGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+            <stop offset="0%" stop-color="#b8922a"/>
+            <stop offset="50%" stop-color="#f8e38c"/>
+            <stop offset="100%" stop-color="#d7ae4d"/>
+          </linearGradient>
+        </defs>
+        <circle class="timer-circle-bg" cx="100" cy="100" r="88"/>
+        <circle class="timer-circle-fill" id="timerRing" cx="100" cy="100" r="88"
+                stroke-dasharray="553" stroke-dashoffset="0"/>
+      </svg>
+      <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center">
+        <div class="timer-display" id="timerDisplay">5:00</div>
+        <div style="font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:rgba(255,255,255,0.35)">minutos</div>
+      </div>
+    </div>
+    <div class="timer-instrucao">
+      Respire pelo coração.<br>
+      Observe a decisão como se fosse de outra pessoa.<br>
+      Deixe a clareza emergir.
+    </div>
+    <button class="btn-ghost" onclick="pularFreeze()">Já fiz · prosseguir →</button>
+  </div>
+
+  <div id="freezePos" style="display:none;margin-top:32px">
+    <div class="intro-decisao">
+      <div class="intro-decisao-label">Qual foi a primeira percepção que surgiu sobre esta decisão?</div>
+      <textarea class="intro-decisao-input" id="inputFreeze"
+                placeholder="Anote livremente o que emergiu durante os 5 minutos..."
+                rows="4"></textarea>
+    </div>
+    <button class="btn" onclick="avancarParaVeredicto()">Próxima etapa →</button>
+  </div>
+</div>
+</div>
+
+<!-- ═══════════════════════════════
+     TELA 4 — VEREDICTO
+════════════════════════════════════ -->
+<div class="tela" id="tela-4">
+<div class="container">
+  <div class="etapa-header">
+    <div class="etapa-num">Etapa 04 · Veredicto</div>
+    <h2 class="etapa-titulo">Com base no protocolo, o que a análise indica?</h2>
+    <div class="etapa-pergunta">"Considere tudo que emergiu nas três etapas anteriores — a análise técnica, o mapa emocional e a percepção do Freeze Frame."</div>
+    <p class="etapa-desc">O veredicto é seu — o protocolo estrutura a decisão, mas a responsabilidade é sempre do decisor.</p>
+  </div>
+
+  <div class="veredicto-wrap">
+    <div class="veredicto-opcao" id="ver-pros" onclick="selecionarVeredicto('pros')">
+      <div class="ver-ico">✅</div>
+      <div>
+        <div class="ver-nome" style="color:var(--ok)">Prosseguir</div>
+        <div class="ver-desc">A análise técnica é sólida, o estado emocional está calibrado e a percepção do Freeze Frame confirma a decisão. Estou pronto para avançar.</div>
+      </div>
+    </div>
+    <div class="veredicto-opcao" id="ver-rea" onclick="selecionarVeredicto('rea')">
+      <div class="ver-ico">⏸</div>
+      <div>
+        <div class="ver-nome" style="color:var(--alerta)">Reavaliar</div>
+        <div class="ver-desc">Existem lacunas na análise técnica ou fatores emocionais relevantes que precisam ser trabalhados antes de decidir. Preciso de mais informação ou clareza.</div>
+      </div>
+    </div>
+    <div class="veredicto-opcao" id="ver-adi" onclick="selecionarVeredicto('adi')">
+      <div class="ver-ico">⏱</div>
+      <div>
+        <div class="ver-nome" style="color:var(--risco)">Adiar</div>
+        <div class="ver-desc">O estado interno atual não é adequado para esta decisão. O momento não é o certo. A decisão merece mais tempo ou condições diferentes.</div>
+      </div>
+    </div>
+  </div>
+
+  <button class="btn" onclick="gerarResultado()">Gerar meu relatório →</button>
+</div>
+</div>
+
+<!-- ═══════════════════════════════
+     TELA 5 — RESULTADO
+════════════════════════════════════ -->
+<div class="tela" id="tela-5">
+<div class="container">
+
+  <div class="resultado-hero">
+    <div class="resultado-nome-dec" id="res-nome-dec"></div>
+    <div class="resultado-decisao-txt" id="res-decisao-txt"></div>
+    <div class="resultado-veredicto" id="res-veredicto"></div>
+    <div class="resultado-veredicto-sub" id="res-veredicto-sub"></div>
+  </div>
+
+  <div class="resultado-indices">
+    <div class="indice-box">
+      <div class="indice-sigla">ICD™</div>
+      <div class="indice-valor" id="res-icd">—</div>
+      <div class="indice-label">Índice de Clareza Decisória</div>
+    </div>
+    <div class="indice-box">
+      <div class="indice-sigla">GRE</div>
+      <div class="indice-valor" id="res-gre">—</div>
+      <div class="indice-label">Grau de Risco Emocional</div>
+    </div>
+    <div class="indice-box">
+      <div class="indice-sigla">GRD</div>
+      <div class="indice-valor" id="res-grd">—</div>
+      <div class="indice-label">Grau de Risco Decisório</div>
+    </div>
+  </div>
+
+  <div class="resultado-justificativa">
+    <div class="resultado-just-titulo">Justificativa do veredicto</div>
+    <div class="resultado-just-txt" id="res-just"></div>
+  </div>
+
+  <div class="resultado-fatores">
+    <div class="resultado-fat-titulo">Mapa de Fatores Emocionais Identificados</div>
+    <div id="res-fatores"></div>
+  </div>
+
+  <div class="resultado-cta">
+    <div class="resultado-cta-titulo">Este relatório é seu — para sempre.</div>
+    <div class="resultado-cta-desc">Use o Protocolo VIDA quantas vezes precisar, para qualquer decisão patrimonial importante. Acesso permanente e ilimitado.</div>
+    <button class="btn" onclick="window.print()">Salvar relatório como PDF</button>
+    <button class="btn-ghost" onclick="reiniciar()">Nova decisão →</button>
+  </div>
+
+  <div style="text-align:center;margin-bottom:40px">
+    <p style="font-size:15px;color:rgba(255,255,255,0.50);margin-bottom:20px">
+      Quer transformar este diagnóstico em um plano de ação?
+    </p>
+    <a href="https://wa.me/5511979530555?text=Olá%20Ivan%2C%20acabei%20de%20usar%20o%20Protocolo%20VIDA%20e%20gostaria%20de%20conversar%20sobre%20minha%20decisão."
+       style="display:inline-block;background:transparent;border:1px solid rgba(215,174,77,0.3);color:var(--om);font-size:13px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;padding:14px 28px;border-radius:2px;text-decoration:none">
+      Falar com Ivan Vianna CFP® →
+    </a>
+  </div>
+
+</div>
+</div>
+
+<footer>
+  <strong style="color:rgba(255,255,255,0.65)">Ivan Vianna · CFP®</strong> · Planejador financeiro · Arquiteto de patrimônio<br>
+  CNPJ 56.099.913/0001-61 · ivanviannafinancas.com.br · WhatsApp: (11) 97953-0555
+</footer>
+
+<script>
+// ── ESTADO ──
+let nome='', decisao='', valor='';
+let respostasTec=[], respostasEmo=[];
+let veredicto='';
+let freezeTxt='';
+let timerInterval=null;
+let timerSegundos=300;
+
+// ── PERGUNTAS TÉCNICAS ──
+const TECNICAS=[
+  {id:'t1', label:'Clareza dos números',
+   pergunta:'Você consegue explicar a lógica financeira desta decisão sem hesitar?',
+   opcoes:['Não tenho clareza suficiente','Tenho clareza parcial','Tenho clareza razoável','Tenho clareza boa','Tenho clareza total']},
+  {id:'t2', label:'Cenários adversos',
+   pergunta:'Você mapeou o que acontece se o pior cenário ocorrer?',
+   opcoes:['Não pensei nisso','Pensei superficialmente','Mapeei os riscos principais','Mapeei bem os riscos','Tenho plano para cada cenário']},
+  {id:'t3', label:'Liquidez',
+   pergunta:'Esta decisão compromete sua liquidez ou reserva de emergência?',
+   opcoes:['Compromete severamente','Compromete significativamente','Compromete moderadamente','Compromete pouco','Não compromete']},
+  {id:'t4', label:'Reversibilidade',
+   pergunta:'Se esta decisão se mostrar equivocada, você consegue reverter sem grandes perdas?',
+   opcoes:['Irreversível com perdas graves','Difícil de reverter','Reversível com custo médio','Relativamente reversível','Facilmente reversível']},
+];
+
+// ── PERGUNTAS EMOCIONAIS ──
+const EMOCIONAIS=[
+  {id:'e1', label:'Pressão externa',
+   pergunta:'Você está sendo pressionado por alguém ou por circunstâncias externas a decidir agora?',
+   cor:'#ff8888',
+   opcoes:['Pressão intensa','Pressão significativa','Pressão moderada','Pressão leve','Sem pressão externa']},
+  {id:'e2', label:'Medo de perder oportunidade',
+   pergunta:'Você sente que "vai perder o momento" se não decidir agora?',
+   cor:'#ffcc66',
+   opcoes:['Muito presente','Presente','Moderado','Leve','Não presente']},
+  {id:'e3', label:'Euforia ou entusiasmo excessivo',
+   pergunta:'Existe uma empolgação que pode estar distorcendo sua análise?',
+   cor:'#ffcc66',
+   opcoes:['Euforia intensa','Entusiasmo elevado','Entusiasmo moderado','Entusiasmo leve','Estado neutro']},
+  {id:'e4', label:'Medo de arrepender-se',
+   pergunta:'Você está decidindo para evitar o arrependimento — não porque a decisão é boa?',
+   cor:'#ff8888',
+   opcoes:['Muito presente','Presente','Moderado','Leve','Não presente']},
+  {id:'e5', label:'Alinhamento com valores',
+   pergunta:'Esta decisão está alinhada com o que você considera importante para seu patrimônio familiar?',
+   cor:'#55cc88',
+   opcoes:['Completamente desalinhada','Pouco alinhada','Moderadamente alinhada','Bem alinhada','Completamente alinhada']},
+];
+
+function gerarPerguntaHTML(p, lista, idx){
+  const html=`
+  <div class="escala-wrap" id="wrap-${p.id}">
+    <span class="escala-label">${idx+1}. ${p.pergunta}</span>
+    <div class="escala-opcoes">
+      ${p.opcoes.map((o,i)=>`
+        <button class="escala-btn" onclick="selecionarResposta('${p.id}',${i},this,'${lista}')">
+          <span class="escala-n">${i+1}</span>
+          <span class="escala-txt">${o}</span>
+        </button>`).join('')}
+    </div>
+  </div>`;
+  return html;
+}
+
+function selecionarResposta(id, val, btn, lista){
+  const wrap=document.getElementById('wrap-'+id);
+  wrap.querySelectorAll('.escala-btn').forEach(b=>b.classList.remove('sel'));
+  btn.classList.add('sel');
+  if(lista==='tec'){
+    const idx=TECNICAS.findIndex(p=>p.id===id);
+    respostasTec[idx]=val;
+  } else {
+    const idx=EMOCIONAIS.findIndex(p=>p.id===id);
+    respostasEmo[idx]=val;
+  }
+}
+
+// ── INICIAR ──
+function iniciar(){
+  nome=(document.getElementById('inputNome').value||'').trim()||'Decisor';
+  decisao=(document.getElementById('inputDecisao').value||'').trim()||'Decisão patrimonial';
+  valor=(document.getElementById('inputValor').value||'').trim();
+
+  // Gerar perguntas técnicas
+  const contTec=document.getElementById('perguntas-tecnicas');
+  contTec.innerHTML=TECNICAS.map((p,i)=>gerarPerguntaHTML(p,'-tec',i)).join('');
+  respostasTec=Array(TECNICAS.length).fill(null);
+
+  // Gerar perguntas emocionais
+  const contEmo=document.getElementById('perguntas-emocionais');
+  contEmo.innerHTML=EMOCIONAIS.map((p,i)=>gerarPerguntaHTML(p,'-emo',i)).join('');
+  respostasEmo=Array(EMOCIONAIS.length).fill(null);
+
+  mostrar('tela-1');
+  atualizarProgresso(1);
+}
+
+function avancarParaEmocional(){
+  mostrar('tela-2');
+  atualizarProgresso(2);
+}
+
+function avancarParaFreeze(){
+  mostrar('tela-3');
+  atualizarProgresso(3);
+}
+
+// ── FREEZE FRAME ──
+function iniciarFreeze(){
+  document.getElementById('freezeIntro').style.display='none';
+  document.getElementById('timerWrap').style.display='block';
+  timerSegundos=300;
+  atualizarTimer();
+  timerInterval=setInterval(()=>{
+    timerSegundos--;
+    atualizarTimer();
+    if(timerSegundos<=0){
+      clearInterval(timerInterval);
+      mostrarPosFreeze();
+    }
+  },1000);
+}
+
+function atualizarTimer(){
+  const m=Math.floor(timerSegundos/60);
+  const s=timerSegundos%60;
+  document.getElementById('timerDisplay').textContent=
+    `${m}:${s.toString().padStart(2,'0')}`;
+  // Anel
+  const circ=2*Math.PI*88; // 553
+  const offset=circ*(1-timerSegundos/300);
+  document.getElementById('timerRing').style.strokeDashoffset=offset;
+}
+
+function pularFreeze(){
+  if(timerInterval) clearInterval(timerInterval);
+  mostrarPosFreeze();
+}
+
+function mostrarPosFreeze(){
+  document.getElementById('timerWrap').style.display='none';
+  document.getElementById('freezePos').style.display='block';
+}
+
+function avancarParaVeredicto(){
+  freezeTxt=(document.getElementById('inputFreeze').value||'').trim();
+  mostrar('tela-4');
+  atualizarProgresso(4);
+}
+
+// ── VEREDICTO ──
+function selecionarVeredicto(v){
+  ['pros','rea','adi'].forEach(x=>{
+    document.getElementById('ver-'+x).classList.remove('sel-'+x);
+  });
+  document.getElementById('ver-'+v).classList.add('sel-'+v);
+  veredicto=v;
+}
+
+// ── GERAR RESULTADO ──
+function gerarResultado(){
+  if(!veredicto) return;
+
+  // Calcular scores
+  const mediaTec = respostasTec.filter(r=>r!==null).length > 0
+    ? respostasTec.reduce((a,b)=>(a||0)+(b||0),0)/TECNICAS.length
+    : 2;
+
+  const medioEmo = respostasEmo.filter(r=>r!==null).length > 0
+    ? respostasEmo.reduce((a,b)=>(a||0)+(b||0),0)/EMOCIONAIS.length
+    : 2;
+
+  // ICD™ = clareza técnica (0-100)
+  const icd = Math.round((mediaTec/4)*100);
+
+  // GRE = grau de risco emocional (0-100, inversamente proporcional p/ negativos)
+  // emocionais negativos (e1-e4): score alto = mais risco
+  // emocional positivo (e5): score alto = menos risco
+  const emoNeg = respostasEmo.slice(0,4).reduce((a,b)=>(a||0)+(b||0),0)/4;
+  const emoPos = (respostasEmo[4]||2)/4;
+  const gre = Math.round(((emoNeg/4)*(1-emoPos/1))*100);
+
+  // GRD = grau de risco decisório combinado
+  const grd = Math.round(((4-mediaTec)/4*60 + (gre/100)*40));
+  const grdFinal = Math.min(100, Math.max(0, grd));
+
+  // Veredicto
+  const VEREDICTOS = {
+    pros: {label:'PROSSEGUIR', cls:'pros',
+      sub:'A análise indica que as condições estão adequadas para avançar com esta decisão.'},
+    rea: {label:'REAVALIAR', cls:'rea',
+      sub:'A análise identificou pontos que merecem revisão antes de avançar.'},
+    adi: {label:'ADIAR', cls:'adi',
+      sub:'As condições atuais — internas ou externas — indicam que este não é o momento ideal.'},
+  };
+
+  const v = VEREDICTOS[veredicto];
+
+  // Justificativa
+  const justs = {
+    pros: `A análise técnica apresenta clareza suficiente (ICD™ ${icd}/100) e os fatores emocionais identificados estão em nível controlável (GRE ${gre}/100). O Freeze Frame reforçou a percepção positiva sobre a decisão. O contexto sugere que prosseguir é uma escolha fundamentada.`,
+    rea: `Existem dimensões da análise técnica ou emocional que merecem atenção antes de avançar. O ICD™ de ${icd}/100 indica que há lacunas na clareza técnica, e o GRE de ${gre}/100 sugere que fatores emocionais podem estar influenciando a avaliação. Recomenda-se revisar os pontos identificados antes de decidir.`,
+    adi: `O estado interno atual ou as condições externas não estão favoráveis para esta decisão. O GRE de ${gre}/100 indica presença significativa de fatores emocionais, e o GRD de ${grdFinal}/100 sugere risco decisório elevado. Adiar preserva a capacidade de decidir com mais clareza.`,
+  };
+
+  // Fatores emocionais
+  const fat = EMOCIONAIS.map((p,i)=>({
+    nome: p.label,
+    val: respostasEmo[i]||2,
+    cor: p.cor,
+    desc: p.opcoes[respostasEmo[i]||2],
+  }));
+
+  // Preencher resultado
+  document.getElementById('res-nome-dec').textContent =
+    `${nome} · Decisão avaliada em ${new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'})}`;
+  document.getElementById('res-decisao-txt').textContent = `"${decisao}"`;
+
+  const resVer = document.getElementById('res-veredicto');
+  resVer.textContent = v.label;
+  resVer.className = `resultado-veredicto ${v.cls}`;
+  document.getElementById('res-veredicto-sub').textContent = v.sub;
+
+  document.getElementById('res-icd').textContent = icd;
+  document.getElementById('res-gre').textContent = gre;
+  document.getElementById('res-grd').textContent = grdFinal;
+
+  document.getElementById('res-just').textContent = justs[veredicto];
+
+  // Fatores
+  const fatEl = document.getElementById('res-fatores');
+  fatEl.innerHTML = fat.map(f=>`
+    <div class="fat-item">
+      <div class="fat-bar-wrap">
+        <div class="fat-nome">${f.nome}</div>
+        <div class="fat-barra"><div class="fat-fill" style="width:${(f.val/4)*100}%;background:${f.cor}"></div></div>
+        <div class="fat-desc">${f.desc}</div>
+      </div>
+      <div class="fat-pct" style="color:${f.cor}">${Math.round((f.val/4)*100)}%</div>
+    </div>`).join('');
+
+  mostrar('tela-5');
+  atualizarProgresso(5);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+// ── UTILITÁRIOS ──
+function mostrar(id){
+  document.querySelectorAll('.tela').forEach(t=>t.classList.remove('ativa'));
+  document.getElementById(id).classList.add('ativa');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function atualizarProgresso(etapa){
+  const pct = (etapa/5)*100;
+  document.getElementById('progressFill').style.width=pct+'%';
+  const labels=['Introdução','Análise técnica','Verificação emocional','Freeze Frame','Veredicto','Relatório'];
+  document.getElementById('headerEtapa').textContent=labels[etapa]||'';
+}
+
+function reiniciar(){
+  nome=''; decisao=''; valor='';
+  respostasTec=[]; respostasEmo=[];
+  veredicto=''; freezeTxt='';
+  if(timerInterval) clearInterval(timerInterval);
+  timerSegundos=300;
+  document.getElementById('freezeIntro').style.display='block';
+  document.getElementById('timerWrap').style.display='none';
+  document.getElementById('freezePos').style.display='none';
+  document.getElementById('inputNome').value='';
+  document.getElementById('inputDecisao').value='';
+  document.getElementById('inputValor').value='';
+  mostrar('tela-0');
+  atualizarProgresso(0);
+}
+</script>
+</body>
+</html>
